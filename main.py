@@ -1,14 +1,24 @@
 import sys
-from PySide6.QtCore import QUrl
-from PySide6.QtQuick import QQuickView
 from PySide6.QtGui import QGuiApplication
+from PySide6.QtQml import QQmlApplicationEngine
+from PySide6.QtCore import QUrl
 
-import qmlshader_rc  # 导入编译后的资源模块
-
-if __name__ == '__main__':
+def main():
     app = QGuiApplication(sys.argv)
-    view = QQuickView()
-    view.setSource(QUrl("main.qml"))
-    view.setResizeMode(QQuickView.SizeRootObjectToView)
-    view.show()
+    
+    # 启用QML调试（可选）
+    from PySide6.QtQml import QQmlDebuggingEnabler
+    QQmlDebuggingEnabler.enableDebugging(True)
+
+    engine = QQmlApplicationEngine()
+    
+    # 加载主QML文件
+    engine.load(QUrl.fromLocalFile("main.qml"))
+    
+    if not engine.rootObjects():
+        sys.exit(-1)
+    
     sys.exit(app.exec())
+
+if __name__ == "__main__":
+    main()

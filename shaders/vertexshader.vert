@@ -1,13 +1,10 @@
-#version 440 core
-layout(location = 0) in vec4 qt_Vertex;
-layout(location = 1) in vec2 qt_MultiTexCoord0;
-layout(std140, binding = 0) uniform buf {
-    mat4 qt_Matrix;
-    float qt_Opacity;
-};
-out vec2 texCoord;
+ VARYING vec3 pos;
+ VARYING vec2 texcoord;
 
-void main() {
-    texCoord = qt_MultiTexCoord0;
-    gl_Position = qt_Matrix * qt_Vertex;
-}
+ void MAIN()
+ {
+     pos = VERTEX;
+     pos.x += sin(time * 4.0 + pos.y) * amplitude;
+     texcoord = UV0;
+     POSITION = MODELVIEWPROJECTION_MATRIX * vec4(pos, 1.0);
+ }
