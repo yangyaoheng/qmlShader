@@ -1,8 +1,13 @@
- VARYING vec3 pos;
- VARYING vec2 texcoord;
+#version 440 core
+layout(std140, binding = 0) uniform buf {
+    mat4 qt_Matrix;
+    float qt_Opacity;
+};
+in vec2 texCoord;
+out vec4 fragColor;
 
- void MAIN()
- {
-     vec4 c = texture(tex, texcoord);
-     FRAGCOLOR = vec4(pos.x * 0.02, pos.y * 0.02, pos.z * 0.02, alpha) * c;
- }
+void main() {
+    vec4 baseColor = vec4(0.5, 0.0, 1.0, 1.0);
+    float gradient = smoothstep(0.2, 0.8, texCoord.x);
+    fragColor = mix(baseColor, vec4(1.0, 1.0, 0.0, 1.0), gradient) * qt_Opacity;
+}
