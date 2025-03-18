@@ -61,7 +61,7 @@ Window {
                     fragmentShader: "shaders/fragmentshader.frag"
                 }
             ]
-        }*/
+        }
 
         Model {
             id: model
@@ -92,6 +92,63 @@ Window {
                     // 计算旋转角度，这里绕 Y 轴旋转
                     model.eulerRotation = Qt.vector3d(0, t * 100, 0)
                 }
+            }
+        }*/
+
+        Model {
+            id: model
+            source: "#Sphere"
+            scale: Qt.vector3d(0.5, 0.5, 0.5)
+            position: Qt.vector3d(0, 0, 0)
+            materials: [
+                DefaultMaterial {
+                    diffuseColor: Qt.rgba(0, 1, 0, 1)
+                }
+            ]
+            
+            // 定义 Bezier 曲线的控制点
+            property var controlPoints: [
+                Qt.vector3d(0, 0, 0),
+                Qt.vector3d(1, 2, 1),
+                Qt.vector3d(3, -1, 2),
+                Qt.vector3d(4, 0, 0)
+            ]
+
+            Timer {
+                id: animTimer
+                interval: 30
+                running: true
+                repeat: true
+                property real t: 0
+                property int steps: 100
+
+                onTriggered: {
+                    if (t >= 1) {
+                        t = 0
+                    }
+                    // 计算 Bezier 曲线上的点
+                    var point = model.calculateBezierPoint(t,model.controlPoints)
+                    model.position = point
+                    t += interval
+                }
+            }
+
+            function calculateBezierPoint(t, points) {
+                var n = points.length - 1
+                var result = Qt.vector3d(0, 0, 0)
+                for (var i = 0; i <= n; i++) {
+                    var coefficient = binomialCoefficient(n, i) * Math.pow(1 - t, n - i) * Math.pow(t, i)
+                    result = result.plus(points[i].times(coefficient))
+                }
+                return result
+            }
+
+            function binomialCoefficient(n, k) {
+                var result = 1
+                for (var i = 1; i <= k; i++) {
+                    result *= (n - (k - i)) / i
+                }
+                return result
             }
         }
     }
